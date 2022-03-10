@@ -1,0 +1,74 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description:
+    This template will create a VPC with two pub subnets spanning across
+    2 Availability Zones and basic Route Tables.
+
+
+Resources:
+
+  ATCVPC:
+    Type: 'AWS::EC2::VPC'
+    Properties:
+      CidrBlock: 10.100.0.0/16
+      Tags:
+        - Key: Name
+          Value: ATC-VPC
+  PublicSubnet1:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref ATCVPC
+      AvailabilityZone: us-east-1a
+      CidrBlock: 10.100.1.0/24
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: ATC-Public-1
+  PublicSubnet2:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref ATCVPC
+      AvailabilityZone: us-east-1b
+      CidrBlock: 10.100.2.0/24
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: ATC-Public-2
+  InternetGateway:
+    Type: 'AWS::EC2::InternetGateway'
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Join 
+            - _
+            - - !Ref 'AWS::StackName'
+        - Key: Network
+          Value: Public
+  GatewayToInternet:
+    Type: 'AWS::EC2::VPCGatewayAttachment'
+    Properties:
+      VpcId: !Ref ATCVPC
+      InternetGatewayId: !Ref InternetGateway
+  PublicRouteTable:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref ATCVPC
+      Tags:
+        - Key: Name
+          Value: ATC-Public-TB
+  PublicRoute:
+    Type: 'AWS::EC2::Route'
+    DependsOn: GatewayToInternet
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+  PublicSubnet1RouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref PublicSubnet1
+      RouteTableId: !Ref PublicRouteTable
+  PublicSubnet2RouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref PublicSubnet2
+      RouteTableId: !Ref PublicRouteTable

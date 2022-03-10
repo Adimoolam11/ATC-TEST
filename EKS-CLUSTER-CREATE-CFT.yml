@@ -1,0 +1,18 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Template to Create EKS Cluster"
+
+Parameters:
+  ClusterName:
+    Type: String
+    
+Resources:
+  EKSCluster:
+    Type: "AWS::EKS::Cluster"
+    Properties:
+      Name: !Ref ClusterName
+      RoleArn: "arn:aws:iam::040633512857:role/ATC-EKS-CLUSTER-IAM-ROLE-eksClusterRole-LPZONEFAOJ9H"
+      Version: "1.21"
+      ResourcesVpcConfig: 
+        SubnetIds: 
+        - "subnet-054e42940d959f555"
+        - "subnet-0758d089253a3ce35"

@@ -1,0 +1,74 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'This Template creates EKS NODE GROUP'
+
+Parameters:
+
+  KubernetesVersion:
+    Type: String
+    Description: The EKS supported Kubernetes version for your cluster
+    Default: 1.21
+    AllowedValues:
+      - 1.21
+      - 1.19
+      - 1.18
+
+  ClusterName:
+    Type: String
+    Description: The name of the cluster
+
+  NodeInstanceRoleArn:
+    Type: String
+    Description: The NodeInstanceRole Arn to use for the eks nodegroup (managed data plane)
+
+  DataPlanePrivateSubnetIds:
+    Type: List<AWS::EC2::Subnet::Id>
+    Description: Private subnets for your Amazon EKS data plane nodes
+
+  WorkerNodeGroupName:
+    Type: String
+    Description: The name of the node group for the worker nodes in the data plane. Right now we are only supporting 1 node group per cluster.
+
+  WorkerNodesInstanceType:
+    Type: String
+    Description: The instance type for the worker nodes in the data plane. Right now we are only supporting 1 instance type for all worker nodes.
+    Default: t3.medium
+    AllowedValues:
+      - t3.small
+      - t3.medium
+      - t3.large
+      - m5.large
+      - m5.xlarge
+      - c5.large
+      - c5.xlarge
+
+  WorkerNodesEc2SshKey:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: The Amazon EC2 SSH key that provides access for SSH communication with the nodes in the managed node group
+
+  SourceSecurityGroupsForWorkerNodes:
+    Type: List<AWS::EC2::SecurityGroup::Id>
+    Description: The security groups that are allowed SSH access (port 22) to the nodes. If you specify an Amazon EC2 SSH key but do not specify a source security group when you create a managed node group, then port 22 on the nodes is opened to the internet.
+
+Resources:
+
+  EKSManagedDataPlane:
+    Type: AWS::EKS::Nodegroup
+    Properties:
+      AmiType: AL2_x86_64
+      CapacityType: ON_DEMAND
+      ClusterName: !Ref ClusterName
+      ForceUpdateEnabled: false
+      InstanceTypes:
+        - !Ref WorkerNodesInstanceType
+      NodegroupName: !Ref WorkerNodeGroupName
+      NodeRole: !Ref NodeInstanceRoleArn
+      RemoteAccess: 
+        Ec2SshKey: !Ref WorkerNodesEc2SshKey
+        SourceSecurityGroups: !Ref SourceSecurityGroupsForWorkerNodes
+      ScalingConfig:
+        DesiredSize: 2
+        MaxSize: 2
+        MinSize: 2
+      Subnets: !Ref DataPlanePrivateSubnetIds
+      Version: !Ref KubernetesVersion
