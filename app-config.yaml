@@ -1,0 +1,4 @@
+jenkins:
+  baseUrl: https://jenkins.services.american-technology.net/
+  username: venu
+  apiKey: 11959c039e4ddd2b5ba1094f10fe0e9a36
