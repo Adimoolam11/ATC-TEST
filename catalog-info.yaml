@@ -4,7 +4,7 @@ metadata:
   name: 'Jenkins'
   description: 'a description'
   annotations:
-    jenkins.io/job-full-name: "instanceName:ATC-Training-API/dev"
+    jenkins.io/job-full-name: "instanceName:pipeline-syntax"
     github.com/project-slug: backstage/backstage
 spec:
   type: service
