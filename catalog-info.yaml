@@ -1,7 +1,7 @@
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: 'Jenkins-test'
+  name: 'Jenkins-demo'
   description: 'a description'
   annotations:
     jenkins.io/job-full-name: "default:ATC-Training-API/dev"
