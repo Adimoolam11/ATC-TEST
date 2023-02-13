@@ -4,7 +4,7 @@ metadata:
   name: 'Jenkins-test'
   description: 'a description'
   annotations:
-    jenkins.io/job-full-name: "default:pipeline-syntax"
+    jenkins.io/job-full-name: "default:ATC-Training-API/dev"
 spec:
   type: service
   lifecycle: experimental
