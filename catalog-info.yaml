@@ -4,7 +4,7 @@ metadata:
   name: 'Jenkins-demo'
   description: 'a description'
   annotations:
-    jenkins.io/job-full-name: "default:ATC-Training-API/dev"
+    jenkins.io/job-full-name: "default:ATC-Training-API/"
 spec:
   type: service
   lifecycle: experimental
